@@ -1,129 +1,119 @@
 package com.productmanufacturer.ServiceImpl;
 
-import java.text.ParseException;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
+import javax.transaction.Transactional;
+
+import org.elasticsearch.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.productmanufacturer.Dao.ProductManufacturerRepository;
-import com.productmanufacturer.ExceptionHandle.ProductTypeException;
+import com.productmanufacturer.DAO.ProductManufacturerRepository;
+import com.productmanufacturer.ExceptionHandle.GlobalException;
 import com.productmanufacturer.Model.ProductManufacturer;
-import com.productmanufacturer.Request.ProductDetailsRequest;
 import com.productmanufacturer.Service.ProductService;
-import com.productmanufacturer.Util.Utility;
 
 @Service
 public class ProductServiceImpl implements ProductService {
 
-	private static final Logger logger=LoggerFactory.getLogger(ProductServiceImpl.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+
 	@Autowired
 	private ProductManufacturerRepository ProductManufacturerRepository;
-	
-	@Override
-	public String addProductDetails(ProductDetailsRequest productDetailsRequest) throws ParseException {
-		String msg="";
-		ProductManufacturer productmfg=ProductManufacturerRepository.findByProductidOrProductcode(productDetailsRequest.getProductid(), productDetailsRequest.getProductcode());
-        if(null!=productmfg) {
-        	throw new ProductTypeException("Product Details Already Present!!!!- Try To Save Another Product", HttpStatus.ALREADY_REPORTED);
-        }else {
-        	ProductManufacturer productmnuf=new ProductManufacturer();
-        	productmnuf.setProductid(productDetailsRequest.getProductid());
-        	productmnuf.setProductname(productDetailsRequest.getProductname());
-        	productmnuf.setProductcode(productDetailsRequest.getProductcode());
-        	productmnuf.setProductbrand(productDetailsRequest.getProductbrand());
-        	productmnuf.setProductmfgdate(Utility.StringToDateConvert(productDetailsRequest.getProductmfgdate(), "Unable To Save ManufacturerDate"));
-        	productmnuf.setProductprice(productDetailsRequest.getProductprice());
-        	logger.info("<------Product Details------>"+productmnuf);
-        	ProductManufacturerRepository.save(productmnuf);
-        	msg="success";
-		}
-       return msg;  
-	}
 
 	@Override
-	public List<Map<String, Object>> getAllProduct() {
-		List<Map<String,Object>> listData=new LinkedList<Map<String,Object>>();
-		List<ProductManufacturer> productlist=ProductManufacturerRepository.findAll();
-		logger.info("<------Product Details List------>"+productlist);
-		if (null!=productlist && !productlist.isEmpty()) {
-			Collections.sort(productlist, (o1,o2)-> o1.getProductcode().compareTo(o2.getProductcode()));
-			productlist.parallelStream().forEach(l->{
-				Map<String,Object> map=new HashMap<String,Object>();
-				map.put("CreatedDate", l.getCreatedDate());
-				map.put("ProductId", l.getProductid());
-				map.put("ProductName", l.getProductname());
-				map.put("ProductCode", l.getProductcode());
-				map.put("ProductBrand", l.getProductbrand());
-				map.put("ProductMfgDate", l.getProductmfgdate());
-				map.put("ProductPrice", l.getProductprice());
-				listData.add(map);
-			});
-		}else {
-			throw new NullPointerException("Product Details Not Found");
-		}
-	  return listData;	
-	}
-
-	@Override
-	public  List<Map<String, Object>> getProductByProductcode(String productcode) {
-		List<Map<String,Object>> listData=new LinkedList<Map<String,Object>>();
-		ProductManufacturer product=ProductManufacturerRepository.findByProductcode(productcode);
-		logger.info("<------Product Details------>"+product);
-		if(null!=product) {
-			Map<String,Object> map=new HashMap<String,Object>();
-			map.put("CreatedDate", product.getCreatedDate());
-			map.put("ProductId",   product.getProductid());
-			map.put("ProductName", product.getProductname());
-			map.put("ProductCode", product.getProductcode());
-			map.put("ProductBrand",product.getProductbrand());
-			map.put("ProductMfgDate",product.getProductmfgdate());
-			map.put("ProductPrice", product.getProductprice());
-			listData.add(map);
-		}else {
-			throw new NullPointerException("Product Details Not Found");
-		}
-		return listData;		
-	}
-
-	@Override
-	public String updateProductDetailsByProductcode(String productcode,ProductDetailsRequest productDetailsRequest) {
-		String msg="";
-		ProductManufacturer product=ProductManufacturerRepository.findByProductcode(productcode);
-		if(null!=product) {
-			product.setProductname(productDetailsRequest.getProductname());
-			product.setProductbrand(productDetailsRequest.getProductbrand());
-			product.setProductcode(productDetailsRequest.getProductcode());
+	@Transactional(rollbackOn = Exception.class)
+	public ProductManufacturer addProductDetails(ProductManufacturer productDetailsRequest) {
+		boolean isAvaliable = ProductManufacturerRepository.existsByProductCodeOrSerialNoAndIsActive(
+				productDetailsRequest.getProductCode(), productDetailsRequest.getSerialNo(), 'Y');
+		if (isAvaliable) {
+			throw new GlobalException("Product Details Are Already Avaliable");
+		} else {
+			ProductManufacturer product = new ProductManufacturer();
+			product.setProductCode(productDetailsRequest.getProductCode());
+			product.setProductName(productDetailsRequest.getProductName());
+			product.setProductbrandName(productDetailsRequest.getProductbrandName());
+			product.setModelNo(productDetailsRequest.getModelNo());
+			product.setSerialNo(productDetailsRequest.getSerialNo());
+			product.setTotalStock(productDetailsRequest.getTotalStock());
+			product.setAvaliableStock(productDetailsRequest.getAvaliableStock());
+			product.setIsActive('Y');
+			product.setMfgDate(productDetailsRequest.getMfgDate());
+			product.setExpDate(productDetailsRequest.getExpDate());
 			product.setProductprice(productDetailsRequest.getProductprice());
-			logger.info("<------Product Details------>"+product);
-			ProductManufacturerRepository.save(product);
-			msg="success";
-		}else {
-			throw new NullPointerException("Product Not Found To Update Data");
+			product.setDescription(productDetailsRequest.getDescription());
+			logger.info("Product Detail:{}" + product);
+			return ProductManufacturerRepository.save(product);
 		}
-	 return msg;	
 	}
 
 	@Override
-	public String deleteProductByProductcode(String productcode) {
-		String msg="";
-		ProductManufacturer product=ProductManufacturerRepository.findByProductcode(productcode);	
-		if(null!=product) {
-			logger.info("<------Product Details------>"+product);
-			ProductManufacturerRepository.delete(product);
-			msg="success";
-		}else {
-			throw new NullPointerException("Product Not Found To Delete Data!!!");
+	public List<ProductManufacturer> getAllProduct() {
+		List<ProductManufacturer> productlist = ProductManufacturerRepository.findAll('Y');
+		logger.info("<------Product Details List------>" + productlist);
+		if (null != productlist && !productlist.isEmpty()) {
+			Collections.sort(productlist, (p1, p2) -> p1.getProductprice().compareTo(p2.getProductprice()));
+			return productlist;
+		} else {
+			throw new NullPointerException("Product Details Not Found");
 		}
-	  return msg;	
+	}
+
+	@Override
+	public List<ProductManufacturer> getProductBySearchkey(String searchKey) {
+		List<ProductManufacturer> productList = ProductManufacturerRepository.findBySearchkey(searchKey, 'Y');
+		if (null != productList && !productList.isEmpty()) {
+			Collections.sort(productList, (p1, p2) -> p1.getProductprice().compareTo(p2.getProductprice()));
+			return productList;
+		} else {
+			throw new NullPointerException("Products Details Not Found With Key: " + searchKey);
+		}
+	}
+
+	@Transactional(rollbackOn = Exception.class)
+	@Override
+	public ProductManufacturer updateProductDetailsByProductcode(String productCode,
+			ProductManufacturer productDetailsRequest) {
+		Optional<ProductManufacturer> chkPoint = ProductManufacturerRepository.findByProductCodeAndIsActive(productCode,
+				'Y');
+		if (chkPoint.isPresent()) {
+			ProductManufacturer product = chkPoint.get();
+			logger.info("Fetch Product Detail:{}" + product);
+			product.setProductName(productDetailsRequest.getProductName());
+			product.setProductbrandName(productDetailsRequest.getProductbrandName());
+			product.setModelNo(productDetailsRequest.getModelNo());
+			product.setTotalStock(productDetailsRequest.getTotalStock());
+			product.setAvaliableStock(productDetailsRequest.getAvaliableStock());
+			product.setMfgDate(productDetailsRequest.getMfgDate());
+			product.setExpDate(productDetailsRequest.getExpDate());
+			product.setProductprice(productDetailsRequest.getProductprice());
+			product.setDescription(productDetailsRequest.getDescription());
+			logger.info("Updated Product Detail:{}" + product);
+			return ProductManufacturerRepository.save(product);
+		} else {
+			throw new NullPointerException("Product Details Not Avaliable For productCode: " + productCode);
+		}
+
+	}
+
+	@Transactional(rollbackOn = Exception.class)
+	@Override
+	public boolean deleteProductByProductcode(String productcode) {
+		boolean status = false;
+		Optional<ProductManufacturer> chkPoint = ProductManufacturerRepository.findByProductCodeAndIsActive(productcode,
+				'Y');
+		if (chkPoint.isPresent()) {
+			ProductManufacturer product = chkPoint.get();
+			product.setIsActive('N');
+			status = true;
+		} else {
+			throw new NullPointerException("Product Details Not Avaliable For productCode: " + productcode);
+		}
+		return status;
 	}
 
 }

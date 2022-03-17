@@ -1,9 +1,8 @@
 package com.productmanufacturer.Controller;
 
-import java.text.ParseException;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,104 +11,104 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.productmanufacturer.Request.ProductDetailsRequest;
+import com.productmanufacturer.Model.ProductManufacturer;
 import com.productmanufacturer.Response.ProductDetailsResponce;
 import com.productmanufacturer.Service.ProductService;
 
 import io.swagger.annotations.Api;
 
-@Api(value = "ProductManufacturerController" ,description = "This is ProductManufacturer Controller for Warehouse Product Operation")
+@Api(value = "ProductManufacturerController", description = "This is ProductManufacturer Controller for Warehouse Product Operation")
 @RestController
-@RequestMapping(value = "/v1/productapi")
+@RequestMapping(value = "/v1/productmanufacture")
 public class ProductController {
 
-	private static final Logger logger=LoggerFactory.getLogger(ProductController.class);
-	
+	private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
+
 	@Autowired
 	private ProductService productService;
-	
+
 	@PostMapping("/add-productdetails")
-	public ResponseEntity<ProductDetailsResponce> addProductDetails(@RequestBody ProductDetailsRequest productDetailsRequest) throws ParseException{
-		logger.info("<---Request Payload--->"+productDetailsRequest);
-		if(null!=productDetailsRequest.getProductid() && !productDetailsRequest.getProductid().isEmpty() &&
-		   null!=productDetailsRequest.getProductname() && !productDetailsRequest.getProductname().isEmpty()&&
-		   null!=productDetailsRequest.getProductcode() && !productDetailsRequest.getProductcode().isEmpty() &&
-		   null!=productDetailsRequest.getProductbrand() && !productDetailsRequest.getProductbrand().isEmpty() &&
-		   null!=productDetailsRequest.getProductmfgdate() && !productDetailsRequest.getProductmfgdate().isEmpty()) {
-		 String result=productService.addProductDetails(productDetailsRequest);
-		     if (result.equalsIgnoreCase("success")) {
-			    return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), true, "Product Details Saved", result),HttpStatus.CREATED);	
-		     }
-		}else {
-			return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "Input Field Missing!!Please Check", null),HttpStatus.BAD_REQUEST);
+	public ResponseEntity<ProductDetailsResponce> addProductDetails(
+			@Valid @ModelAttribute ProductManufacturer productDetailsRequest) {
+		logger.info("<---Request Payload--->" + productDetailsRequest);
+		ProductManufacturer product = productService.addProductDetails(productDetailsRequest);
+		if (null != product) {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(true, "Product Detail Saved", product), HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(false, "Unable To Save Product Detail", product),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "Unable To Save Product Details", null),HttpStatus.EXPECTATION_FAILED);
 	}
-	
+
 	@GetMapping("/get-all-productdetails")
-	public ResponseEntity<ProductDetailsResponce> getProductDetails(){
-		List<Map<String, Object>> prodList=productService.getAllProduct();
-		logger.info("<-----Product List----->"+prodList);
-		if(null!=prodList && !prodList.isEmpty()) {
-			 return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), true, "Product Details List Fetched", prodList),HttpStatus.OK);
-		}else {
-			return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "Data Not Found", prodList),HttpStatus.NOT_FOUND);
+	public ResponseEntity<ProductDetailsResponce> getProductDetails() {
+		List<ProductManufacturer> prodList = productService.getAllProduct();
+		logger.info("<-----Product List----->" + prodList);
+		if (null != prodList && !prodList.isEmpty()) {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(true, "Product Details List Fetched", prodList), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(false, "Unable To Fetch Product Details List", prodList),
+					HttpStatus.NOT_FOUND);
 		}
 	}
-	
-	@GetMapping("/get-productdetail-by-productcode/{productcode}")
-	public ResponseEntity<ProductDetailsResponce> getProductDetailByProductcode(@PathVariable(value = "productcode") String productcode){
-	 if (null!=productcode) {
-		List<Map<String, Object>> prodList=productService.getProductByProductcode(productcode);
-		logger.info("<-----Product Detail----->"+prodList);
-		if(null!=prodList && !prodList.isEmpty()) {
-			 return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), true, "Product Detail Fetched", prodList),HttpStatus.OK);
-		}else {
-			return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "Data Not Found", prodList),HttpStatus.NOT_FOUND);
+
+	@GetMapping("/get-productdetailsByKey")
+	public ResponseEntity<ProductDetailsResponce> getProductBySearchkey(@RequestParam("searchKey") String searchKey) {
+		logger.info("<---Search Key--->" + searchKey);
+		List<ProductManufacturer> prodList = productService.getProductBySearchkey(searchKey);
+		logger.info("<-----Product List----->" + prodList);
+		if (null != prodList && !prodList.isEmpty()) {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(true, "Product Details Fetched", prodList), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(false, "Unable To Fetch Product Details", prodList),
+					HttpStatus.NOT_FOUND);
 		}
-	 }else {
-		 return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "ProductCode Missing!!Please Check", null),HttpStatus.BAD_REQUEST);	 
-	 }
 	}
-	
-	@PutMapping("/update-productdetail-by-productcode/{productcode}")
-	public ResponseEntity<ProductDetailsResponce> updateProductDetail(@PathVariable(value = "productcode") String productcode,@RequestBody ProductDetailsRequest productDetailsRequest){
-	 if (null!=productcode) {	
-		logger.info("<---Request Payload--->"+productDetailsRequest);
-		if(null!=productDetailsRequest.getProductname() && !productDetailsRequest.getProductname().isEmpty()&&
-		   null!=productDetailsRequest.getProductcode() && !productDetailsRequest.getProductcode().isEmpty() &&
-		   null!=productDetailsRequest.getProductbrand() && !productDetailsRequest.getProductbrand().isEmpty()) {
-		 String result=productService.updateProductDetailsByProductcode(productcode, productDetailsRequest);
-		     if (result.equalsIgnoreCase("success")) {
-			    return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), true, "Product Details Updated", result),HttpStatus.OK);	
-		     }
-		}else {
-			return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "Input Parameter Missing!!Please Check", null),HttpStatus.BAD_REQUEST);
+
+	@PutMapping("/update-productdetails/{productCode}")
+	public ResponseEntity<ProductDetailsResponce> updateProductdetailsByProductcode(
+			@PathVariable("productCode") String productCode,
+			@Valid @ModelAttribute ProductManufacturer productDetailsRequest) {
+		logger.info("<---ProductCode And Request Payload--->" + productCode + " " + productDetailsRequest);
+		ProductManufacturer product = productService.updateProductDetailsByProductcode(productCode,
+				productDetailsRequest);
+		logger.info("<-----Updated Product Detail----->" + product);
+		if (null != product) {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(true, "Product Details Updated Successfully", product), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(false, "Unable To Update Product Details", product),
+					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-	 }else {
-		 return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "ProductCode Missing!!Please Check", null),HttpStatus.BAD_REQUEST);
-	 }
-  return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "Error While Update Data", null),HttpStatus.INTERNAL_SERVER_ERROR);	 
- }
-	
-	
-	@DeleteMapping("/delete-productdetail-by-productcode/{productcode}")
-	public ResponseEntity<ProductDetailsResponce> deleteProductDetail(@PathVariable(value = "productcode") String productcode){
-	 if (null!=productcode) {	
-		 String result=productService.deleteProductByProductcode(productcode);
-		     if (result.equalsIgnoreCase("success")) {
-			    return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), true, "Product Details deleted Sucessful", result),HttpStatus.OK);	
-		     }
-	}else {
-		return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "ProductCode Missing!!Please Check", null),HttpStatus.BAD_REQUEST);	
 	}
- return new ResponseEntity<ProductDetailsResponce>(new ProductDetailsResponce(ZonedDateTime.now(), false, "Error While Delete Data", null),HttpStatus.INTERNAL_SERVER_ERROR);	 
- }	 
+
+	@DeleteMapping("/delete-productdetails")
+	public ResponseEntity<ProductDetailsResponce> deleteProductdetailsByProductcode(
+			@RequestParam("productCode") String productCode) {
+		logger.info("<---ProductCode --->" + productCode);
+		boolean status = productService.deleteProductByProductcode(productCode);
+		if (status) {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(true, "Product Details Deleted Successfully", null), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(false, "Unable To Delete Product Details", null),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 }
