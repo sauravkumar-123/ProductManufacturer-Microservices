@@ -1,0 +1,133 @@
+# Created at 2022-03-31T23:59:22.540
+TestSet has not finished before stream error has appeared >> initializing exit by non-null configuration: null
+java.io.EOFException
+	at java.base/java.io.DataInputStream.readInt(DataInputStream.java:396)
+	at org.apache.maven.surefire.booter.MasterProcessCommand.decode(MasterProcessCommand.java:115)
+	at org.apache.maven.surefire.booter.CommandReader$CommandRunnable.run(CommandReader.java:391)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+
+
+# Created at 2022-03-31T23:59:22.973
+Unexpected IOException with stream: 2022-03-31 23:59:22.971  INFO [ProductManufacturer,,] 18392 --- [           main] pertySourcedRequestMappingHandlerMapping : Mapped URL path [/v2/api-docs] onto method [springfox.documentation.swagger2.web.Swagger2Controller#getDocumentation(String, HttpServletRequest)]
+
+
+# Created at 2022-03-31T23:59:28.365
+Unexpected IOException with stream: 2022-03-31 23:59:28.364  INFO [ProductManufacturer,,] 18392 --- [           main] o.s.d.elasticsearch.support.VersionInfo  : Version Spring Data Elasticsearch: 4.2.5
+
+
+# Created at 2022-03-31T23:59:28.367
+Unexpected IOException with stream: 2022-03-31 23:59:28.366  INFO [ProductManufacturer,,] 18392 --- [           main] o.s.d.elasticsearch.support.VersionInfo  : Version Elasticsearch Client in build: 7.12.1
+
+
+# Created at 2022-03-31T23:59:28.370
+Unexpected IOException with stream: 2022-03-31 23:59:28.368  INFO [ProductManufacturer,,] 18392 --- [           main] o.s.d.elasticsearch.support.VersionInfo  : Version Elasticsearch Client used: 7.12.1
+
+
+# Created at 2022-03-31T23:59:29.951
+Unexpected IOException with stream: 2022-03-31 23:59:29.950  INFO [ProductManufacturer,,] 18392 --- [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+
+
+# Created at 2022-03-31T23:59:31.286
+Unexpected IOException with stream: 2022-03-31 23:59:31.285  WARN [ProductManufacturer,,] 18392 --- [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+
+
+# Created at 2022-03-31T23:59:31.510
+Unexpected IOException with stream: 2022-03-31 23:59:31.510  INFO [ProductManufacturer,,] 18392 --- [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+
+
+# Created at 2022-03-31T23:59:31.697
+Unexpected IOException with stream: 2022-03-31 23:59:31.696  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+
+
+# Created at 2022-03-31T23:59:31.712
+Unexpected IOException with stream: 2022-03-31 23:59:31.711  INFO [ProductManufacturer,,] 18392 --- [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+
+
+# Created at 2022-03-31T23:59:31.783
+Unexpected IOException with stream: 2022-03-31 23:59:31.782  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+
+
+# Created at 2022-03-31T23:59:31.784
+Unexpected IOException with stream: 2022-03-31 23:59:31.783  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+
+
+# Created at 2022-03-31T23:59:31.786
+Unexpected IOException with stream: 2022-03-31 23:59:31.785  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+
+
+# Created at 2022-03-31T23:59:31.788
+Unexpected IOException with stream: 2022-03-31 23:59:31.787  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+
+
+# Created at 2022-03-31T23:59:31.789
+Unexpected IOException with stream: 2022-03-31 23:59:31.788  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+
+
+# Created at 2022-03-31T23:59:31.791
+Unexpected IOException with stream: 2022-03-31 23:59:31.790  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+
+
+# Created at 2022-03-31T23:59:31.793
+Unexpected IOException with stream: 2022-03-31 23:59:31.792  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+
+
+# Created at 2022-03-31T23:59:32.724
+Unexpected IOException with stream: 2022-03-31 23:59:32.723  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+
+
+# Created at 2022-03-31T23:59:32.759
+Unexpected IOException with stream: 2022-03-31 23:59:32.755  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+
+
+# Created at 2022-03-31T23:59:32.782
+Unexpected IOException with stream: 2022-03-31 23:59:32.779  INFO [ProductManufacturer,,] 18392 --- [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+
+
+# Created at 2022-03-31T23:59:32.802
+Unexpected IOException with stream: 2022-03-31 23:59:32.800  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1648751372797 with initial instances count: 2
+
+
+# Created at 2022-03-31T23:59:32.866
+Unexpected IOException with stream: 2022-03-31 23:59:32.864  INFO [ProductManufacturer,,] 18392 --- [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application PRODUCTMANUFACTURER with eureka with status UP
+
+
+# Created at 2022-03-31T23:59:32.869
+Unexpected IOException with stream: 2022-03-31 23:59:32.867  INFO [ProductManufacturer,,] 18392 --- [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1648751372867, current=UP, previous=STARTING]
+
+
+# Created at 2022-03-31T23:59:33.292
+Unexpected IOException with stream: 2022-03-31 23:59:33.085  INFO [ProductManufacturer,,] 18392 --- [           main] d.s.w.p.DocumentationPluginsBootstrapper : Context refreshed
+
+
+# Created at 2022-03-31T23:59:33.295
+Unexpected IOException with stream: 2022-03-31 23:59:33.292  INFO [ProductManufacturer,,] 18392 --- [nfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTMANUFACTURER/DESKTOP-3HS828K:ProductManufacturer:8080: registering service...
+
+
+# Created at 2022-03-31T23:59:33.454
+Unexpected IOException with stream: 2022-03-31 23:59:33.453  INFO [ProductManufacturer,,] 18392 --- [           main] d.s.w.p.DocumentationPluginsBootstrapper : Found 1 custom documentation plugin(s)
+
+
+# Created at 2022-03-31T23:59:33.522
+Unexpected IOException with stream: 2022-03-31 23:59:33.520  INFO [ProductManufacturer,,] 18392 --- [nfoReplicator-0] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PRODUCTMANUFACTURER/DESKTOP-3HS828K:ProductManufacturer:8080 - registration status: 204
+
+
+# Created at 2022-03-31T23:59:33.567
+Unexpected IOException with stream: 2022-03-31 23:59:33.566  INFO [ProductManufacturer,,] 18392 --- [           main] s.d.s.w.s.ApiListingReferenceScanner     : Scanning for api listing references
+
+
+# Created at 2022-03-31T23:59:34.144
+Unexpected IOException with stream: 2022-03-31 23:59:34.140  INFO [ProductManufacturer,,] 18392 --- [           main] c.p.ProductManufacturerApplicationTests  : Started ProductManufacturerApplicationTests in 29.935 seconds (JVM running for 33.902)
+
+
+# Created at 2022-03-31T23:59:34.197
+Unexpected IOException: 5,1,com.productmanufacturer.ProductManufacturerApplicationTests,contextLoads,null,null,null
+
+
+# Created at 2022-03-31T23:59:34.651
+Unexpected IOException: 6,1,com.productmanufacturer.ProductManufacturerApplicationTests,contextLoads,null,null,null
+
+
+# Created at 2022-03-31T23:59:34.657
+Unexpected IOException: 2,1,org.apache.maven.surefire.junitplatform.JUnitPlatformProvider,com.productmanufacturer.ProductManufacturerApplicationTests,null,null,null
+
+

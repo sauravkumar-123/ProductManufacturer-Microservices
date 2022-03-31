@@ -17,6 +17,8 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 
+import brave.sampler.Sampler;
+
 @SpringBootApplication
 @EnableEurekaClient
 public class ProductManufacturerApplication {
@@ -48,5 +50,10 @@ public class ProductManufacturerApplication {
 			builder.serializers(new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimeFormat)));
 			builder.serializers(new ZonedDateTimeSerializer(DateTimeFormatter.ofPattern(dateTimeFormat)));
 		};
+	}
+	
+	@Bean
+	public Sampler defaultSampler() {
+		return Sampler.ALWAYS_SAMPLE;
 	}
 }
