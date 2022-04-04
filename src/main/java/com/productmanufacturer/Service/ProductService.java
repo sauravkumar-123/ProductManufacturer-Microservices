@@ -14,6 +14,8 @@ public interface ProductService {
 
 	public List<ProductManufacturer> getProductBySearchkey(String serachkey);
 
+	public ProductManufacturer getProductByProductCode(String productCode);
+
 	public ProductManufacturer updateProductDetailsByProductcode(String productCode,
 			ProductManufacturer productDetailsRequest);
 

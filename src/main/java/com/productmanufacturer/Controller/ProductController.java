@@ -79,6 +79,19 @@ public class ProductController {
 		}
 	}
 
+	@GetMapping("/get-productBycode/{productCode}")
+	public ResponseEntity<ProductDetailsResponce> getProductByProductCode(
+			@PathVariable("productCode") String productCode) {
+		ProductManufacturer product = productService.getProductByProductCode(productCode);
+		if (null != product) {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(true, "Product Detail Fetched", product), HttpStatus.OK);
+		} else {
+			return new ResponseEntity<ProductDetailsResponce>(
+					new ProductDetailsResponce(false, "Product Detail Not Found", product), HttpStatus.NOT_FOUND);
+		}
+	}
+
 	@PutMapping("/update-productdetails/{productCode}")
 	public ResponseEntity<ProductDetailsResponce> updateProductdetailsByProductcode(
 			@PathVariable("productCode") String productCode,

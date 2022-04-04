@@ -74,6 +74,19 @@ public class ProductServiceImpl implements ProductService {
 		}
 	}
 
+	@Override
+	public ProductManufacturer getProductByProductCode(String productCode) {
+		Optional<ProductManufacturer> chkPoint = ProductManufacturerRepository.findByProductCodeAndIsActive(productCode,
+				'Y');
+		if (chkPoint.isPresent()) {
+			ProductManufacturer product = chkPoint.get();
+			logger.info("Fetch Product Detail:{}" + product);
+			return product;
+		} else {
+			throw new NullPointerException("Products Details Not Found With productCode: " + productCode);
+		}
+	}
+
 	@Transactional(rollbackOn = Exception.class)
 	@Override
 	public ProductManufacturer updateProductDetailsByProductcode(String productCode,
